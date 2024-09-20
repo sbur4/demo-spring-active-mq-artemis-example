@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_ARTEMIS_MODE: native
+      SPRING_ARTEMIS_HOST: artemis
+      SPRING_ARTEMIS_PORT: 61616
+      SPRING_ARTEMIS_USER: admin
+      SPRING_ARTEMIS_PASSWORD: admin
+    networks:
+      - app-network
+
+  artemis:
+    image: vromero/activemq-artemis
+    environment:
+      ARTEMIS_USERNAME: admin
+      ARTEMIS_PASSWORD: admin
+    ports:
+      - "8161:8161"  # Management console
+      - "61616:61616"  # Core,MQTT,AMQP,HORNETQ,STOMP,OPENWIRE
+      - "5445:5445"  # HORNETQ,STOMP
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
